@@ -26,7 +26,7 @@ module.create
 `Creates a set of admin commands. First parameter is prefix. Defaults to ':'. Returns adminObj.`  
 
 adminObj:OnCommand(name, callback)  
-`Creates a command with the given name. Callback parameters as as follows: (player, commandObj).`  
+`Creates a command with the given name. Callback parameters as as follows: (player, params). Returns commandObj.`  
 
 adminObj:ChangePrefix(prefix)  
 `Changes the prefix.`  
@@ -35,7 +35,13 @@ adminObj:DelCommand(name[, silent])
 `Deletes command.  If silent is true, it will silence the error of the command not existing.`  
 
 commandObj:Delete()  
-`Deletes command.`
+`Deletes command.`  
+
+params  
+`An array of parameters.`  
+
+params:GetRest(pos)  
+`Concatenates the table starting from a specific point.`
 
 ***
 
