@@ -12,6 +12,8 @@ commandsModule.create = function(prefix)
         };
         
         OnCommand = function(self, command, foo)
+            assert(command, "Command name must exist.")
+            assert(type(foo) == "function", "The given callback is not a function.")
             Hooked[command] = foo
             
             return {
@@ -21,7 +23,9 @@ commandsModule.create = function(prefix)
             }
         end;
         
-        DelCommand = function(self, command, foo)
+        DelCommand = function(self, command, sil)
+            assert(command, "Command name must exist.")
+            assert(sil or Hooked[command], "Attempted to delete non-existing command.")
             Hooked[command] = nil
         end;
         
