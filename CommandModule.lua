@@ -1,39 +1,50 @@
 local commandsModule = {}
 
 commandsModule.create = function(prefix)
-    
+
     prefix = prefix or ":"
-    
+
     local Hooked = {}
-    
+
     local struct = {
         Data = {
-            prefix = prefix
+            prefix = prefix;
+            Thresholds = {};
+            Threshold = function() return 0 end;
         };
-        
-        OnCommand = function(self, command, foo)
+
+        OnCommand = function(self, command, foo, threshold)
+            
+            threshold = threshold or 0
+            
             assert(command, "Command name must exist.")
             assert(type(foo) == "function", "The given callback is not a function.")
-            Hooked[command] = foo
             
+            Hooked[command] = foo
+            self.Data.Thresholds[command] = threshold
+
             return {
                 Delete = function(self)
                     Hooked[command] = nil
                 end;
             }
         end;
-        
+
         DelCommand = function(self, command, sil)
             assert(command, "Command name must exist.")
             assert(sil or Hooked[command], "Attempted to delete non-existing command.")
             Hooked[command] = nil
         end;
-        
+
         ChangePrefix = function(self, p)
             self.Data.prefix = p
         end;
+        
+        Threshold = function(self, f)
+            self.Data.Threshold = f
+        end;
     }
-    
+
     local function disectMessage(m)
         local t = {}
         local curIter = 1
@@ -64,7 +75,7 @@ commandsModule.create = function(prefix)
         for command, func in pairs(Hooked) do
             if m:sub(1, #struct.Data.prefix) == struct.Data.prefix and #m > 1 then
                 local params = disectMessage(m:sub(2, #m))
-                if params[1] == command then
+                if params[1] == command and struct.Data.Threshold(plr) >= struct.Data.Thresholds[command] then
                     table.remove(params, 1)
                     func(plr, params)
                 end
@@ -85,7 +96,7 @@ commandsModule.create = function(prefix)
             registerChat(v, message)
         end)
     end
-    
+
     return struct
 end
 
