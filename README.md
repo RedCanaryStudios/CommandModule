@@ -45,7 +45,7 @@ params:GetRest(pos)
 
 ***
 
-Crash Course:
+Quick Example:
 ```lua
 local microAdmin = cmd.create(":") -- First parameter is command prefix. Defaults to ':'.
 
@@ -72,4 +72,67 @@ cmdObj = microAdmin:OnCommand("TempCommand", function(plr, params)
     
     cmdObj:Delete()
 end)
+```
+***
+
+
+Update 3/17/2021  
+
+# Thresholds  
+
+You may now add thresholds to commands. Thresholds are defaulted to 0.
+
+```lua
+microAdmin:OnCommand("kill", function(plr, params)
+    
+end, 10)
+```
+
+If the plr's threshold is greater or equal to the third param, then the function will run.  
+
+How do you set a threshold?  
+
+You may use the `adminObj:Threshold(callback)` method to do so.  
+
+```lua
+microAdmin:Threshold(function(plr)
+    if plr.Name == "xMicro_Canary" then
+        return 1
+    end
+    return 0
+end)
+```
+
+Once provided a callback, the callback will be given 1 parameter - player.  
+
+The callback should return a numerical value, or else the script will error. This is how you provide the module a way to caculate the threshold of a player. For those who will create admin commands with group ranks, you may simply return the player's group rank to make it easy.  
+
+```lua
+microAdmin:Threshold(function(plr)
+    return plr:GetRankInGroup(groupID)
+end)
+```
+
+Example Product:
+
+```lua
+local cm = require(script.Parent)
+
+local microAdmin = cm.create(":")
+
+microAdmin:Threshold(function(plr)
+    if plr.Name == "xMicro_Canary" then
+        return 1
+    end
+    return 0
+end)
+
+microAdmin:OnCommand("Reset", function(plr, params)
+    plr.Character.Humanoid.Health = 0
+end) -- threshold by default is 0, so everyone can use it
+
+microAdmin:OnCommand("Invincible", function(plr, params)
+    plr.Character.Humanoid.MaxHealth = math.huge
+    plr.Charater.Humanoid.Health = math.huge
+end, 1) -- setting threshold to 1, so only I (xMicro_Canary) can use it.
 ```
